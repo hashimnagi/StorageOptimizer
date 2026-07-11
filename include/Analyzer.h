@@ -6,19 +6,7 @@
 #include <cstdint>
 #include <cstddef>
 #include "FileInfo.h"
-
-struct AnalysisResult {
-    // kept because if there are zero files, there IS no largest file.
-    std::optional<FileInfo> largestFile;
-
-    std::uintmax_t totalSize = 0;
-    std::unordered_map<std::string, std::uintmax_t> sizeByExtension;
-    std::unordered_map<std::string, std::size_t> countByExtension;
-
-    // Kept here so the Reporter never has to Resort or Reslice files itself.
-    std::vector<FileInfo> filesSortedBySize;   // descending, biggest first
-    std::vector<FileInfo> topLargestFiles;     // e.g. top 10, ready to print
-};
+#include"AnalysisResult.h"
 
 // Stateless analyzer for computing storage statistics.
 class Analyzer {
