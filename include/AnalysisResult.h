@@ -15,7 +15,7 @@ struct AnalysisResult {
 
     std::uintmax_t totalSize = 0;
     std::unordered_map<std::string, std::uintmax_t> sizeByExtension;
-    std::unordered_map<std::string, int> countByExtension;
+    std::unordered_map<std::string, std::size_t> countByExtension;
 
     // Kept here so the Reporter never has to re-sort or re-slice files itself.
     std::vector<FileInfo> filesSortedBySize;   // descending, biggest first
