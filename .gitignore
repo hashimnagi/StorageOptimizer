@@ -1,9 +1,32 @@
+# Visual Studio
+.vs/
+*.user
+*.VC.db
+*.opendb
+
+# VS Code
+.vscode/
+CppProperties.json
+
 # Build output
 build/
-
-# Windows executables
-*.exe
+Debug/
+Release/
+x64/
+Storage .bdbd6339/
+build_verbose_log.txt
 
 # Object files
-*.o
 *.obj
+*.o
+
+# Executables
+*.exe
+
+# Optional: Visual Studio generated files
+*.ipch
+*.tlog
+
+# Visual Studio user/project files
+*.vcxproj.user
+StorageOptimizer/x64/
