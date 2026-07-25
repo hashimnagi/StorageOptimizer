@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="StorageOptimizer/StorageOptimizer.vcxproj" Id="67e02db8-116e-46db-a75a-fcfa55a9d60c" />
+</Solution>
