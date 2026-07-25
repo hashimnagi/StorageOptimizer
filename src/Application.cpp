@@ -2,10 +2,10 @@
 #include "FileScanner.h"
 #include "Analyzer.h"
 #include "Reporter.h"
+
 #include <iostream>
 #include <exception>
 
-// Runs the complete application workflow.
 void Application::run() {
     try {
         auto folder = promptForFolder();
@@ -17,14 +17,12 @@ void Application::run() {
         Reporter::printReport(result);
     }
     catch (const std::exception& ex) {
-        // Report any error that occurs while running the application.
         std::cerr << "Error: " << ex.what() << '\n';
     }
 }
 
-// Prompts the user for the folder to analyze.
 std::filesystem::path Application::promptForFolder() const {
-    std::cout << "Enter the folder path to analyze: ";
+    std::cout << "Enter the folder path to analyze: " << std::flush;
 
     std::string input;
     std::getline(std::cin, input);
