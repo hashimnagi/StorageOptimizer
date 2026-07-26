@@ -2,31 +2,33 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <optional>
 #include <cstdint>
 #include <cstddef>
 #include "FileInfo.h"
-#include"AnalysisResult.h"
+#include "AnalysisResult.h"
 
-// Stateless analyzer for computing storage statistics.
+// Analyzer is intentionally STATELESS.
+// It owns no data , every function takes the files it needs to work on
+// as a parameter, and returns a fresh answer. Nothing is stored between calls.
 class Analyzer {
-    public:
-        // The topN controls how many files go into result.topLargestFiles.
-        static AnalysisResult analyze(const std::vector<FileInfo>& files, std::size_t topN = 10);
+public:
+    // The ONE public entry point most callers will use:
+    //    auto result = Analyzer::analyze(files, 10);
+    // topN controls how many files go into result.topLargestFiles.
+    static AnalysisResult analyze(const std::vector<FileInfo>& files, std::size_t topN = 10);
 
-        static double getExtensionPercentage(const AnalysisResult& result, const std::string& extension);
+    // Useful on its own once you already have a result, so it doesn't
+    // have to recompute totalSize / sizeByExtension from scratch.
+    static double getExtensionPercentage(const AnalysisResult& result, const std::string& extension);
 
-    private:
+private:
+    // These are implementation details of analyze() , not part of the
+    // public API. A caller never needs to touch these directly.
+    static std::uintmax_t calculateTotalSize(const std::vector<FileInfo>& files);
+    static std::unordered_map<std::string, std::uintmax_t> groupByExtension(const std::vector<FileInfo>& files);
+    static std::unordered_map<std::string, std::size_t> countExtensions(const std::vector<FileInfo>& files);
 
-        static std::optional<FileInfo> findLargestFile(const std::vector<FileInfo>& files);
-
-        static std::uintmax_t calculateTotalSize(const std::vector<FileInfo>& files);
-
-        static std::unordered_map<std::string, std::uintmax_t> groupByExtension(const std::vector<FileInfo>& files);
-
-        static std::unordered_map<std::string, std::size_t> countExtensions(const std::vector<FileInfo>& files);
-
-        static std::vector<FileInfo> sortFilesBySize(const std::vector<FileInfo>& files, bool descending = true);
-
-        static std::vector<FileInfo> getTopNLargestFiles(const std::vector<FileInfo>& sortedDescending, std::size_t n);
+    // Copies 'files', sorts the copy descending by size, and keeps
+    // only the first topN of them (or fewer, if there aren't that many).
+    static std::vector<FileInfo> findTopLargestFiles(const std::vector<FileInfo>& files, std::size_t topN);
 };

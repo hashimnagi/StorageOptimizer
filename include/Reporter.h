@@ -1,40 +1,34 @@
 #pragma once
-
 #include <string>
 #include <sstream>
 #include <filesystem>
 #include "AnalysisResult.h"
 
-
+// Reporter is stateless -- just like FileScanner and Analyzer.
+// It never stores an AnalysisResult or a vector<FileInfo> as a member.
+// Its only job: turn an AnalysisResult into readable text, and send
+// that text somewhere (console or file).
 class Reporter {
 public:
-    // Builds the complete report as a string.
+    // Builds the full human-readable report as a single string.
     static std::string buildReportText(const AnalysisResult& result);
 
-    // Prints the report to the console.
+    // Convenience: builds the report and prints it straight to std::cout.
     static void printReport(const AnalysisResult& result);
 
-    // Saves the report to a text file.
-    static void saveReport(const AnalysisResult& result,
-                        const std::filesystem::path& outputFile);
+    // Convenience: builds the report and writes it to a file instead.
+    // Same text as printReport() -- just a different destination.
+    static void saveReport(const AnalysisResult& result, const std::filesystem::path& outputFile);
 
 private:
-    // Appends the report summary.
-    static void appendSummary(std::ostringstream& out,
-                            const AnalysisResult& result);
+    // Each of these writes ONE section of the report into 'out'.
+    // buildReportText() just calls them in order ,it doesn't
+    // format anything itself.
+    static void appendSummary(std::ostringstream& out, const AnalysisResult& result);
+    static void appendExtensionStatistics(std::ostringstream& out, const AnalysisResult& result);
+    static void appendTopFiles(std::ostringstream& out, const AnalysisResult& result);
 
-    // Appends information about the largest file.
-    static void appendLargestFile(std::ostringstream& out,
-                                const AnalysisResult& result);
-
-    // Appends storage usage grouped by file extension.
-    static void appendExtensionStatistics(std::ostringstream& out,
-                                        const AnalysisResult& result);
-
-    // Appends the list of the largest files.
-    static void appendTopFiles(std::ostringstream& out,
-                            const AnalysisResult& result);
-
-    // Converts raw bytes into KB, MB, GB, etc.
+    // Formatting helper: turns raw bytes into something readable,
+    // e.g. 112300000000 -> "112.30 GB"
     static std::string formatSize(std::uintmax_t bytes);
 };

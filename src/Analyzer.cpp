@@ -2,18 +2,17 @@
 #include <algorithm>
 #include <numeric>
 
-
-// it calls each helper function in a turn and collects everything into one
-// AnalysisResult, and hand it back.
+// Calls each helper function in turn and collects everything into one
+// AnalysisResult, and hands it back.
 AnalysisResult Analyzer::analyze(const std::vector<FileInfo>& files, std::size_t topN) {
     AnalysisResult result;
 
-    result.largestFile = findLargestFile(files);
+    result.totalFileCount = files.size();
     result.totalSize = calculateTotalSize(files);
     result.sizeByExtension = groupByExtension(files);
     result.countByExtension = countExtensions(files);
-    result.filesSortedBySize = sortFilesBySize(files, true);
-    result.topLargestFiles = getTopNLargestFiles(result.filesSortedBySize, topN);
+
+    result.topLargestFiles = findTopLargestFiles(files, topN);
 
     return result;
 }
@@ -26,7 +25,7 @@ double Analyzer::getExtensionPercentage(const AnalysisResult& result, const std:
     if (result.totalSize == 0) return 0.0;
 
     auto it = result.sizeByExtension.find(extension);
-    if (it == result.sizeByExtension.end()) return 0.0;  
+    if (it == result.sizeByExtension.end()) return 0.0;
 
     return (static_cast<double>(it->second) / static_cast<double>(result.totalSize)) * 100.0;
 }
@@ -36,27 +35,11 @@ double Analyzer::getExtensionPercentage(const AnalysisResult& result, const std:
 // A caller outside this class can't reach these directly anymore.
 // ===========================================================
 
-// largest file. Walks through every file, keep the biggest seen so far.
-std::optional<FileInfo> Analyzer::findLargestFile(const std::vector<FileInfo>& files) {
-    if (files.empty()) {
-        return std::nullopt; 
-    }
-
-    auto largestIt = std::max_element(
-        files.begin(), files.end(),
-        [](const FileInfo& a, const FileInfo& b) {
-            return a.getSize() < b.getSize();
-        }
-    );
-
-    return *largestIt;
-}
-
 // total storage used. Add up every file's size.
 std::uintmax_t Analyzer::calculateTotalSize(const std::vector<FileInfo>& files) {
     return std::accumulate(
         files.begin(), files.end(),
-        std::uintmax_t{0},
+        std::uintmax_t{ 0 },
         [](std::uintmax_t runningTotal, const FileInfo& file) {
             return runningTotal + file.getSize();
         }
@@ -85,29 +68,21 @@ std::unordered_map<std::string, std::size_t> Analyzer::countExtensions(const std
     return countMap;
 }
 
-// sort files by size. Copies first so the original order is untouched.
-std::vector<FileInfo> Analyzer::sortFilesBySize(const std::vector<FileInfo>& files, bool descending) {
-    std::vector<FileInfo> sortedFiles = files;
+// Returns the largest topN files, sorted from largest to smallest.
+std::vector<FileInfo> Analyzer::findTopLargestFiles(const std::vector<FileInfo>& files, std::size_t topN) {
+    std::vector<FileInfo> largestFiles = files;
 
     std::sort(
-        sortedFiles.begin(), sortedFiles.end(),
-        [descending](const FileInfo& a, const FileInfo& b) {
-            if (descending) {
-                return a.getSize() > b.getSize();
-            }
-            return a.getSize() < b.getSize();
+        largestFiles.begin(),
+        largestFiles.end(),
+        [](const FileInfo& a, const FileInfo& b) {
+            return a.getSize() > b.getSize();
         }
     );
 
-    return sortedFiles;
-}
-
-// top N largest files. Takes an already sorted descending vector
-// (analyze() passes result.filesSortedBySize in) and just slices the front.
-std::vector<FileInfo> Analyzer::getTopNLargestFiles(const std::vector<FileInfo>& sortedDescending, std::size_t n) {
-    if (n > sortedDescending.size()) {
-        n = sortedDescending.size();
+    if (topN < largestFiles.size()) {
+        largestFiles.erase(largestFiles.begin() + topN, largestFiles.end());
     }
 
-    return std::vector<FileInfo>(sortedDescending.begin(), sortedDescending.begin() + n);
+    return largestFiles;
 }
