@@ -149,6 +149,9 @@
     <ClCompile Include="..\src\FileScanner.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Reporter.cpp" />
+    <ClCompile Include="DirectoryAnalyzer.cpp" />
+    <ClCompile Include="DuplicateFinder.cpp" />
+    <ClCompile Include="Filter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\AnalysisResult.h" />
@@ -157,6 +160,9 @@
     <ClInclude Include="..\include\FileInfo.h" />
     <ClInclude Include="..\include\FileScanner.h" />
     <ClInclude Include="..\include\Reporter.h" />
+    <ClInclude Include="DirectoryAnalyzer.h" />
+    <ClInclude Include="DuplicateFinder.h" />
+    <ClInclude Include="Filter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
