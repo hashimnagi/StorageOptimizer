@@ -12,5 +12,6 @@ int main() {
 
     std::cerr << "APPLICATION FINISHED\n";
 
+    std::cin.get();
     return 0;
 }
