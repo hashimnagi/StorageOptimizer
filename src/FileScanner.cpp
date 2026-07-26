@@ -12,17 +12,28 @@ std::vector<FileInfo> FileScanner::scanFolder(const std::filesystem::path& folde
         throw std::runtime_error("The specified path is not a directory.");
     }
 
-    for(const auto& entry : std::filesystem::recursive_directory_iterator(folderPath,
-    std::filesystem::directory_options::skip_permission_denied)){
-    const std::filesystem::path& filePath = entry.path(); 
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(
+        folderPath,
+        std::filesystem::directory_options::skip_permission_denied))
+    {
+        try
+        {
+            if (!entry.is_regular_file())
+                continue;
 
-        if(entry.is_regular_file()){
+            const auto& filePath = entry.path();
+
             files.emplace_back(
                 filePath.filename().string(),
                 filePath,
                 filePath.extension().string(),
                 entry.file_size()
             );
+        }
+        catch (const std::exception&)
+        {
+            // Skip this file and continue scanning.
+            continue;
         }
     }
     return files;
