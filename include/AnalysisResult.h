@@ -5,10 +5,11 @@
 #include <cstdint>
 #include <cstddef>
 #include "FileInfo.h"
+#include "DirectoryInfo.h"
 
 // The contract between Analyzer and Reporter.
 // Analyzer builds one of these; Reporter reads one of these.
-// Pure data, no behavior, so no .cpp file is needed for it (yet).
+// Pure data -- no behavior, so no .cpp file is needed for it (yet).
 struct AnalysisResult {
     std::size_t totalFileCount = 0;
     std::uintmax_t totalSize = 0;
@@ -19,4 +20,8 @@ struct AnalysisResult {
     // The largest topN files, sorted biggest first.
     // topLargestFiles.front() is the single largest file, if it's non-empty.
     std::vector<FileInfo> topLargestFiles;
+
+    // The largest topN directories (by total size of files inside them),
+    // sorted biggest first.
+    std::vector<DirectoryInfo> topLargestDirectories;
 };

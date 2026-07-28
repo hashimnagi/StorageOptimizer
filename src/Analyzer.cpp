@@ -1,6 +1,7 @@
 #include "Analyzer.h"
 #include <algorithm>
 #include <numeric>
+#include <filesystem>
 
 // Calls each helper function in turn and collects everything into one
 // AnalysisResult, and hands it back.
@@ -13,6 +14,7 @@ AnalysisResult Analyzer::analyze(const std::vector<FileInfo>& files, std::size_t
     result.countByExtension = countExtensions(files);
 
     result.topLargestFiles = findTopLargestFiles(files, topN);
+    result.topLargestDirectories = findTopLargestDirectories(files, topN);
 
     return result;
 }
@@ -85,4 +87,39 @@ std::vector<FileInfo> Analyzer::findTopLargestFiles(const std::vector<FileInfo>&
     }
 
     return largestFiles;
+}
+
+// Groups files by their parent directory, sums each directory's total
+// size, then returns the topN largest directories.
+//
+// Step 1: accumulate sizes into an unordered_map, keyed by parent directory.
+// Step 2: copy the map into a vector<DirectoryInfo> (maps can't be sorted directly).
+// Step 3: sort that vector descending by size and keep only the top N.
+std::vector<DirectoryInfo> Analyzer::findTopLargestDirectories(const std::vector<FileInfo>& files, std::size_t topN) {
+    std::unordered_map<std::filesystem::path, std::uintmax_t> sizeByDirectory;
+
+    for (const auto& file : files) {
+        std::filesystem::path directory = file.getPath().parent_path();
+        sizeByDirectory[directory] += file.getSize();
+    }
+
+    std::vector<DirectoryInfo> directories;
+    directories.reserve(sizeByDirectory.size());
+    for (const auto& entry : sizeByDirectory) {
+        directories.emplace_back(entry.first, entry.second);
+    }
+
+    std::sort(
+        directories.begin(),
+        directories.end(),
+        [](const DirectoryInfo& a, const DirectoryInfo& b) {
+            return a.getTotalSize() > b.getTotalSize();
+        }
+    );
+
+    if (topN < directories.size()) {
+        directories.erase(directories.begin() + topN, directories.end());
+    }
+
+    return directories;
 }
