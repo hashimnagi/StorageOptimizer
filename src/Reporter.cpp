@@ -11,7 +11,7 @@
 // ---------------------------------------------------------
 // THE public entry point for building report text.
 // ---------------------------------------------------------
-// This function does no formatting itself , it just calls each
+// This function does no formatting itself -- it just calls each
 // section helper in order. Read this function and you can read
 // the whole shape of the report at a glance.
 std::string Reporter::buildReportText(const AnalysisResult& result) {
@@ -20,6 +20,7 @@ std::string Reporter::buildReportText(const AnalysisResult& result) {
     out << "========== Storage Optimizer ==========\n\n";
 
     appendSummary(out, result);
+    appendTopDirectories(out, result);
     appendExtensionStatistics(out, result);
     appendTopFiles(out, result);
 
@@ -32,6 +33,26 @@ std::string Reporter::buildReportText(const AnalysisResult& result) {
 void Reporter::appendSummary(std::ostringstream& out, const AnalysisResult& result) {
     out << "Total Files: " << result.totalFileCount << "\n";
     out << "Total Size: " << formatSize(result.totalSize) << "\n\n";
+}
+
+// ---------------------------------------------------------
+// Section: Top N largest directories, numbered, with size
+// ---------------------------------------------------------
+void Reporter::appendTopDirectories(std::ostringstream& out, const AnalysisResult& result) {
+    out << "------------------------------------\n";
+    out << "Top " << result.topLargestDirectories.size() << " Largest Directories\n\n";
+
+    if (result.topLargestDirectories.empty()) {
+        out << "(no directories found)\n";
+        return;
+    }
+
+    std::size_t rank = 1;
+    for (const auto& directory : result.topLargestDirectories) {
+        out << rank << ". " << directory.getPath().string() << "\n";
+        out << "   Size : " << formatSize(directory.getTotalSize()) << "\n\n";
+        rank++;
+    }
 }
 
 // ---------------------------------------------------------
@@ -121,7 +142,7 @@ void Reporter::printReport(const AnalysisResult& result) {
 
 // ---------------------------------------------------------
 // Send the report to a file instead.
-// Same text as printReport() ,just a different destination.
+// Same text as printReport() -- just a different destination.
 // ---------------------------------------------------------
 void Reporter::saveReport(const AnalysisResult& result, const std::filesystem::path& outputFile) {
     std::ofstream fileStream(outputFile);

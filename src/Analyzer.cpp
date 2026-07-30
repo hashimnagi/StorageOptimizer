@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <numeric>
 #include <filesystem>
+#include<iostream>
 
 // Calls each helper function in turn and collects everything into one
 // AnalysisResult, and hands it back.
@@ -17,6 +18,9 @@ AnalysisResult Analyzer::analyze(const ScanResult& scanResult, std::size_t topN)
 
     result.topLargestFiles = findTopLargestFiles(files, topN);
     result.topLargestDirectories = findTopLargestDirectories(files, topN);
+    std::cout << "Directories found: "
+        << result.topLargestDirectories.size()
+        << '\n';
 
     // These didn't come from analyzing 'files' -- they came from the scan
     // itself, so we just carry them straight across from ScanResult.

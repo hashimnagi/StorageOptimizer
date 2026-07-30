@@ -33,13 +33,10 @@
     <ClCompile Include="..\src\Reporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Filter.cpp">
+    <ClCompile Include="..\src\DirectoryInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectoryAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DuplicateFinder.cpp">
+    <ClCompile Include="ScanResult.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,13 +59,10 @@
     <ClInclude Include="..\include\Reporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Filter.h">
+    <ClInclude Include="..\include\DirectoryInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectoryAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DuplicateFinder.h">
+    <ClInclude Include="..\include\ScanResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
