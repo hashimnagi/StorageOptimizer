@@ -1,13 +1,12 @@
-# pragma once
+#pragma once
 #include<string>
 #include<filesystem>
-#include<vector>
-#include"FileInfo.h"
+#include"ScanResult.h"
 
-class FileScanner{
-    public:
-    // Scans the given folder recursively and returns metadata
-    // for every regular file that is found.
-    static std::vector<FileInfo> scanFolder(const std::filesystem::path& folderPath);
-
+class FileScanner {
+public:
+    // Scans the given folder recursively and returns everything the
+    // scan discovered -- not just the files, but counts of directories
+    // seen and anything that had to be skipped.
+    static ScanResult scanFolder(const std::filesystem::path& folderPath);
 };

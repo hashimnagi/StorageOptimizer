@@ -6,6 +6,7 @@
 #include <cstddef>
 #include "FileInfo.h"
 #include "DirectoryInfo.h"
+#include "ScanResult.h"
 #include "AnalysisResult.h"
 
 // Analyzer is intentionally STATELESS.
@@ -14,9 +15,9 @@
 class Analyzer {
 public:
     // The ONE public entry point most callers will use:
-    //     auto result = Analyzer::analyze(files, 10);
-    // topN controls how many files go into result.topLargestFiles.
-    static AnalysisResult analyze(const std::vector<FileInfo>& files, std::size_t topN = 10);
+    //     auto result = Analyzer::analyze(scanResult, 10);
+    // topN controls how many files/directories go into the top-N lists.
+    static AnalysisResult analyze(const ScanResult& scanResult, std::size_t topN = 10);
 
     // Useful on its own once you already have a result, so it doesn't
     // have to recompute totalSize / sizeByExtension from scratch.

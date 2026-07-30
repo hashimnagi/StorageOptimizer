@@ -5,16 +5,24 @@
 
 // Calls each helper function in turn and collects everything into one
 // AnalysisResult, and hands it back.
-AnalysisResult Analyzer::analyze(const std::vector<FileInfo>& files, std::size_t topN) {
+AnalysisResult Analyzer::analyze(const ScanResult& scanResult, std::size_t topN) {
+    const std::vector<FileInfo>& files = scanResult.files;
+
     AnalysisResult result;
 
-    result.totalFileCount = files.size();
+    result.totalFileCount = scanResult.totalFiles;
     result.totalSize = calculateTotalSize(files);
     result.sizeByExtension = groupByExtension(files);
     result.countByExtension = countExtensions(files);
 
     result.topLargestFiles = findTopLargestFiles(files, topN);
     result.topLargestDirectories = findTopLargestDirectories(files, topN);
+
+    // These didn't come from analyzing 'files' -- they came from the scan
+    // itself, so we just carry them straight across from ScanResult.
+    result.totalDirectories = scanResult.totalDirectories;
+    result.skippedFiles = scanResult.skippedFiles;
+    result.permissionDenied = scanResult.permissionDenied;
 
     return result;
 }
