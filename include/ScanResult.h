@@ -14,4 +14,7 @@ struct ScanResult {
     std::size_t totalDirectories = 0;
     std::size_t skippedFiles = 0;
     std::size_t permissionDenied = 0;
+
+    // How long the scan itself took, measured by FileScanner.
+    double scanDurationSeconds = 0.0;
 };

@@ -19,6 +19,7 @@ struct AnalysisResult {
     std::size_t totalDirectories = 0;
     std::size_t skippedFiles = 0;
     std::size_t permissionDenied = 0;
+    double scanDurationSeconds = 0.0;
 
     std::unordered_map<std::string, std::uintmax_t> sizeByExtension;
     std::unordered_map<std::string, std::size_t> countByExtension;

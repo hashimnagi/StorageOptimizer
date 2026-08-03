@@ -150,7 +150,6 @@
     <ClCompile Include="..\src\FileScanner.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Reporter.cpp" />
-    <ClCompile Include="ScanResult.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\AnalysisResult.h" />

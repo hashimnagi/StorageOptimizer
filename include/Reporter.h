@@ -25,6 +25,7 @@ private:
     // buildReportText() just calls them in order -- it doesn't
     // format anything itself.
     static void appendSummary(std::ostringstream& out, const AnalysisResult& result);
+    static void appendScanSummary(std::ostringstream& out, const AnalysisResult& result);
     static void appendTopDirectories(std::ostringstream& out, const AnalysisResult& result);
     static void appendExtensionStatistics(std::ostringstream& out, const AnalysisResult& result);
     static void appendTopFiles(std::ostringstream& out, const AnalysisResult& result);
