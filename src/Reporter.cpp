@@ -20,11 +20,23 @@ std::string Reporter::buildReportText(const AnalysisResult& result) {
     out << "========== Storage Optimizer ==========\n\n";
 
     appendSummary(out, result);
+    appendScanSummary(out, result);     
     appendTopDirectories(out, result);
     appendExtensionStatistics(out, result);
     appendTopFiles(out, result);
 
     return out.str();
+}
+
+void Reporter::appendScanSummary(std::ostringstream& out, const AnalysisResult& result) {
+    out << "------------------------------------\n";
+    out << "Scan Summary\n\n";
+
+    out << "Directories Scanned : " << result.totalDirectories << "\n";
+    out << "Files Skipped       : " << result.skippedFiles << "\n";
+    out << "Permission Errors   : " << result.permissionDenied << "\n";
+    out << "Time Taken          : " << std::fixed << std::setprecision(2)
+        << result.scanDurationSeconds << " seconds\n\n";
 }
 
 // ---------------------------------------------------------
