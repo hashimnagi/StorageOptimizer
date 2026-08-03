@@ -4,8 +4,29 @@
 #include<chrono>
 #include<cctype>
 
-ScanResult FileScanner::scanFolder(const std::filesystem::path& folderPath) {
+ScanResult FileScanner::scanFolder(
+    const std::filesystem::path& folderPath,
+    const ProgressCallback& onProgress) {
     ScanResult result;
+
+    // Builds a ScanProgress snapshot from the current result state and
+    // sends it to the caller, if a callback was actually provided.
+    // std::function can be "empty" (holding no callable at all) when the
+    // caller passed nothing -- calling an empty std::function is undefined
+    // behavior, so we must check onProgress before invoking it.
+    auto reportProgress = [&]() {
+        if (!onProgress) {
+            return;
+        }
+
+        ScanProgress progress;
+        progress.filesDiscovered = result.totalFiles;
+        progress.directoriesVisited = result.totalDirectories;
+        progress.skippedFiles = result.skippedFiles;
+        progress.permissionDenied = result.permissionDenied;
+
+        onProgress(progress);
+        };
 
     if (!std::filesystem::exists(folderPath)) {  //check if path exists or not
         throw std::runtime_error("The specified path does not exist.");
@@ -44,6 +65,13 @@ ScanResult FileScanner::scanFolder(const std::filesystem::path& folderPath) {
                 entry.file_size()
             );
             result.totalFiles++;
+
+            // Report progress every 1000 files -- frequent enough to feel
+            // "live", infrequent enough not to flood the console (or slow
+            // the scan down) with a callback on every single file.
+            if (result.totalFiles % 1000 == 0) {
+                reportProgress();
+            }
         }
         catch (const std::filesystem::filesystem_error& fsError)
         {
@@ -69,6 +97,11 @@ ScanResult FileScanner::scanFolder(const std::filesystem::path& folderPath) {
     const auto endTime = std::chrono::steady_clock::now();
     const std::chrono::duration<double> elapsed = endTime - startTime;
     result.scanDurationSeconds = elapsed.count();
+
+    // Final report, even if the last batch wasn't an exact multiple of
+    // 1000 -- otherwise the caller's last-seen number would be stale by
+    // up to 999 files/directories once the scan actually finishes.
+    reportProgress();
 
     return result;
 }

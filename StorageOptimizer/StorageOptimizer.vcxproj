@@ -159,6 +159,7 @@
     <ClInclude Include="..\include\FileInfo.h" />
     <ClInclude Include="..\include\FileScanner.h" />
     <ClInclude Include="..\include\Reporter.h" />
+    <ClInclude Include="..\include\ScanProgress.h" />
     <ClInclude Include="..\include\ScanResult.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

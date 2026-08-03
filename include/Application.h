@@ -1,14 +1,16 @@
 #pragma once
 #include <filesystem>
+#include "ScanProgress.h"
 
-// Coordinates the application by calling each module in order.
-// It doesn't perform scanning, analysis, or reporting itself.
 class Application {
 public:
-    // Runs the complete application workflow.
     void run();
 
 private:
-    // Prompts the user for a folder to scan.
     std::filesystem::path promptForFolder() const;
+
+    // Passed to FileScanner as the progress callback. Prints live
+    // counters to the console, overwriting the same line each time
+    // via '\r' so it feels like one updating display, not scrolling text.
+    static void printScanProgress(const ScanProgress& progress);
 };

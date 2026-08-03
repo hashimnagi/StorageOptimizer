@@ -62,5 +62,8 @@
     <ClInclude Include="..\include\ScanResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\ScanProgress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
