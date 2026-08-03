@@ -6,8 +6,11 @@
 
 ScanResult FileScanner::scanFolder(
     const std::filesystem::path& folderPath,
-    const ProgressCallback& onProgress) {
+    const ProgressCallback& onProgress,
+    const CancellationCallback& onCancellationCheck) {
     ScanResult result;
+
+    constexpr std::size_t PROGRESS_UPDATE_INTERVAL = 1000;
 
     // Builds a ScanProgress snapshot from the current result state and
     // sends it to the caller, if a callback was actually provided.
@@ -66,10 +69,15 @@ ScanResult FileScanner::scanFolder(
             );
             result.totalFiles++;
 
-            // Report progress every 1000 files -- frequent enough to feel
-            // "live", infrequent enough not to flood the console (or slow
-            // the scan down) with a callback on every single file.
-            if (result.totalFiles % 1000 == 0) {
+            // Cancellation and progress are checked together, at the same
+            // interval -- frequent enough to feel responsive, infrequent
+            // enough not to flood the console or slow the scan down.
+            if (result.totalFiles % PROGRESS_UPDATE_INTERVAL == 0) {
+                if (onCancellationCheck && onCancellationCheck()) {
+                    result.cancelled = true;
+                    break;
+                }
+
                 reportProgress();
             }
         }

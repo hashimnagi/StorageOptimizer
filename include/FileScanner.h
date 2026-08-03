@@ -13,15 +13,22 @@ public:
     // (or whether) to display it.
     using ProgressCallback = std::function<void(const ScanProgress&)>;
 
+    // Called periodically during a scan to ask "should I stop?".
+    // Returning true stops the scan early -- this is treated as a normal
+    // outcome (ScanResult.cancelled = true), never as an error.
+    using CancellationCallback = std::function<bool()>;
+
     // Scans the given folder recursively and returns everything the
     // scan discovered -- not just the files, but counts of directories
     // seen and anything that had to be skipped.
     //
-    // onProgress is optional -- pass nothing (the default) and the scan
-    // behaves exactly as before, with no progress reporting at all.
+    // onProgress and onCancellationCheck are both optional -- pass
+    // nothing (the defaults) and the scan behaves exactly as before,
+    // with no progress reporting and no way to cancel early.
     static ScanResult scanFolder(
         const std::filesystem::path& folderPath,
-        const ProgressCallback& onProgress = nullptr
+        const ProgressCallback& onProgress = nullptr,
+        const CancellationCallback& onCancellationCheck = nullptr
     );
 
 private:

@@ -17,4 +17,9 @@ struct ScanResult {
 
     // How long the scan itself took, measured by FileScanner.
     double scanDurationSeconds = 0.0;
+
+    // True if the user stopped the scan early. This is a normal outcome,
+    // not an error -- the scan simply stopped with whatever it had
+    // collected so far.
+    bool cancelled = false;
 };
